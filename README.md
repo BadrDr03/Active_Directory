@@ -16,9 +16,13 @@ The entire environment is built using isolated hypervisor environments under a s
 ### Network Diagram
 ![Network Topology](topology/ad_diagramme.png)
 
-## 🎯 Implementation Phases
-- [ ] Phase 1: Core Network Setup & Static IP Routing Configuration
-- [ ] Phase 2: Active Directory Deployment & Domain Provisioning
-- [ ] Phase 3: Splunk Server Deployment & Auditing Policy Configuration (Sysmon/GPO)
-- [ ] Phase 4: Threat Simulation (Kerberoasting / Brute Force)
-- [ ] Phase 5: Security Monitoring, Dashboards & Root-Cause Analysis (5 Whys)
+## 💻 Virtual Environment Sizing (VirtualBox)
+
+| Machine Name | Operating System | vCPU | RAM | Base Role |
+| :--- | :--- | :--- | :--- | :--- |
+| **ADDC01** | Windows Server 2022 (Evaluation) | 2 | 4 GB | Domain Controller & DNS Server |
+| **Ubuntu-SIEM**| Ubuntu Server 24.04 LTS | 2 | 4 GB | Splunk Enterprise Core |
+| **Win10-Target**| Windows 10 Enterprise | 1 | 2 GB | Domain Joined Client |
+| **Kali-Attacker**| Kali Linux | 1 | 2 GB | Pentesting Platform |
+
+> ⚠️ **Troubleshooting Note:** After the initial Windows Server setup, ensure to remove the installation ISO from the VirtualBox virtual optical drive to prevent the boot order from cycling back into the installer loop.
