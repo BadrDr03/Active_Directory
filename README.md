@@ -10,7 +10,7 @@ The entire environment is built using isolated hypervisor environments under a s
 * **Network Subnet:** `192.168.10.0/24`
 * **Domain Controller (AD DS):** `192.168.10.7` — Windows Server 2022
 * **SIEM Core Server:** `192.168.10.10` — Ubuntu Linux Server (Splunk Enterprise)
-* **Target Workstation:** `192.168.10.X` — Windows 10/11 Enterprise Client
+* **Target Workstation:** `192.168.10.100` — Windows 10/11 Enterprise Client
 * **Attack Platform:** `192.168.10.250` — Kali Linux
 
 ### Network Diagram
@@ -36,7 +36,7 @@ To establish a predictable, non-routable, and isolated lab environment, all virt
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **SIEM Server** | `splunk-siem` | Centralized Log Analytics | Ubuntu Server 24.04 | `192.168.10.10` | `255.255.255.0` | `192.168.10.1` | `8.8.8.8` |
 | **Domain Controller** | `ADDC01` | Active Directory Domain Services | Windows Server 2022 | `192.168.10.7` | `255.255.255.0` | `192.168.10.1` | `127.0.0.1` |
-| **Target Workstation** | `target-PC` | Endpoint Monitoring Target | Windows 10 Enterprise | `192.168.10.50` | `255.255.255.0` | `192.168.10.1` | `192.168.10.7` |
+| **Target Workstation** | `target-PC` | Endpoint Monitoring Target | Windows 10 Enterprise | `192.168.10.100` | `255.255.255.0` | `192.168.10.1` | `192.168.10.7` |
 | **Attacker Machine**| `Kali-Attacker`| Adversary Simulation Platform | Kali Linux | `192.168.10.250`| `255.255.255.0` | `192.168.10.1` | `8.8.8.8` |
 
 ---
