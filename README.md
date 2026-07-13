@@ -91,3 +91,16 @@ Default Gateway: 192.168.10.1
 Preferred DNS Server: 192.168.10.7
 
 ![Import OVA](https://github.com/user-attachments/assets/a555df38-1487-46fc-a376-35d160d0e1e0)
+
+---
+
+🐉 4. Adversary Simulation Platform (Kali-Attacker)
+Static addressing deployed on the interface to guarantee stable target scanning arrays during adversary emulation activities.
+
+IP Assignment: 192.168.10.250
+
+Subnet Mask: 255.255.255.0
+
+Default Gateway: 192.168.10.1
+
+![Import OVA](https://github.com/user-attachments/assets/f1a49e43-3c24-46dd-8b56-cee47c4d6386)
