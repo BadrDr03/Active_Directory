@@ -82,10 +82,12 @@ Preferred DNS Server: 127.0.0.1
 🪟 3. Target Endpoint Workstation (target-PC)
 Configured to securely forward OS logs via the Universal Forwarder, with the active DNS pointed directly to the Domain Controller for authentication mapping.
 
-IP Assignment: 192.168.10.50
+IP Assignment: 192.168.10.100
 
 Subnet Mask: 255.255.255.0
 
 Default Gateway: 192.168.10.1
 
 Preferred DNS Server: 192.168.10.7
+
+![Import OVA](https://github.com/user-attachments/assets/a555df38-1487-46fc-a376-35d160d0e1e0)
