@@ -107,6 +107,10 @@ Default Gateway: 192.168.10.1
 
 ---
 
-🪵 Splunk Telemetry & Endpoint Host VerificationTo ensure all centralized log paths are operational, host monitoring is verified through the Splunk Web interface. The ingestion pipeline tracks system logs forwarded dynamically across the isolated zone.📋 Detected Log Sources (Host Ingestion)FieldIngested ValueSystem RoleVerification StatushostADDC01Active Directory Domain Controller✅ Active & Forwardinghosttarget-PCDomain Client Workstation (Current)✅ Active & ForwardinghostWIN-005LH1JJBT2Target-PC (Legacy Post-Install State)🕒 Historical Cache Only
+🪵 Splunk Telemetry & Endpoint Host Verification
+
+To ensure all centralized log paths are operational, host monitoring is verified through the Splunk Web interface. The ingestion pipeline tracks system logs forwarded dynamically across the isolated zone.
+
+📋 Detected Log Sources (Host Ingestion)FieldIngested ValueSystem RoleVerification StatushostADDC01Active Directory Domain Controller✅ Active & Forwardinghosttarget-PCDomain Client Workstation (Current)✅ Active & ForwardinghostWIN-005LH1JJBT2Target-PC (Legacy Post-Install State)🕒 Historical Cache Only
 
 ![Import OVA](https://github.com/user-attachments/assets/ce5c2496-21a1-4f37-a422-56315afd278d)
