@@ -61,3 +61,31 @@ network:
 ```
 
 ![Import OVA](https://github.com/user-attachments/assets/409220fb-ed08-4360-8de8-e0889ba8f1b9)
+
+---
+
+🪟 2. Active Directory Domain Controller (ADDC01)
+Static parameters set at the Adapter properties (ncpa.cpl) level to maintain core Active Directory directory lookup pathways.
+
+IP Assignment: 192.168.10.7
+
+Subnet Mask: 255.255.255.0
+
+Default Gateway: 192.168.10.1
+
+Preferred DNS Server: 127.0.0.1
+
+![Import OVA](https://github.com/user-attachments/assets/70601e36-b777-468b-b8ae-e60808f2e9fd)
+
+---
+
+🪟 3. Target Endpoint Workstation (target-PC)
+Configured to securely forward OS logs via the Universal Forwarder, with the active DNS pointed directly to the Domain Controller for authentication mapping.
+
+IP Assignment: 192.168.10.50
+
+Subnet Mask: 255.255.255.0
+
+Default Gateway: 192.168.10.1
+
+Preferred DNS Server: 192.168.10.7
