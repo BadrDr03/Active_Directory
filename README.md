@@ -26,3 +26,35 @@ The entire environment is built using isolated hypervisor environments under a s
 | **Kali-Attacker**| Kali Linux | 1 | 2 GB | Pentesting Platform |
 
 > ⚠️ **Troubleshooting Note:** After the initial Windows Server setup, ensure to remove the installation ISO from the VirtualBox virtual optical drive to prevent the boot order from cycling back into the installer loop.
+
+## 🌐 Network Configuration & Infrastructure Topology
+
+To establish a predictable, non-routable, and isolated lab environment, all virtual assets are contained within a dedicated VirtualBox **NAT Network** named `AD-Project` mapped to the `192.168.10.0/24` subnet.
+
+### 📋 Global IP Addressing Table
+| Asset | Hostname | Role | Operating System | IP Address | Subnet Mask | Gateway | Primary DNS |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **SIEM Server** | `splunk-siem` | Centralized Log Analytics | Ubuntu Server 24.04 | `192.168.10.10` | `255.255.255.0` | `192.168.10.1` | `8.8.8.8` |
+| **Domain Controller** | `ADDC01` | Active Directory Domain Services | Windows Server 2022 | `192.168.10.7` | `255.255.255.0` | `192.168.10.1` | `127.0.0.1` |
+| **Target Workstation** | `target-PC` | Endpoint Monitoring Target | Windows 10 Enterprise | `192.168.10.50` | `255.255.255.0` | `192.168.10.1` | `192.168.10.7` |
+| **Attacker Machine**| `Kali-Attacker`| Adversary Simulation Platform | Kali Linux | `192.168.10.250`| `255.255.255.0` | `192.168.10.1` | `8.8.8.8` |
+
+---
+
+### 🐧 1. SIEM Server Configuration (`splunk-siem`)
+The core log engine relies on a hardcoded interface setup via Netplan to eliminate network drift.
+
+* **Configuration Blueprint (`/etc/netplan/50-cloud-init.yaml`)**:
+```yaml
+network:
+  version: 2
+  ethernets:
+    enp0s3:
+      dhcp4: no
+      addresses:
+        - 192.168.10.10/24
+      nameservers:
+        addresses: [8.8.8.8, 1.1.1.1]
+      routes:
+        - to: default
+          via: 192.168.10.1
