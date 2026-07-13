@@ -60,4 +60,4 @@ network:
           via: 192.168.10.1
 ```
 
-[Import OVA](https://github.com/user-attachments/assets/409220fb-ed08-4360-8de8-e0889ba8f1b9)
+![Import OVA](https://github.com/user-attachments/assets/409220fb-ed08-4360-8de8-e0889ba8f1b9)
