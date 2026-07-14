@@ -147,11 +147,7 @@ To enroll the client endpoint into the centralized identity plane, the `target-P
 2. Initiated domain enrollment request querying `badr.local`.
 3. Logged in and authorized credential binding using the `Mohamed Drider` (HR department) account.
 
-#### 📸 [SCREENSHOT] - Active DNS Translation Config on Client
-> 🟥 **[DROP HERE: Screenshot of `ipconfig /all` or IPv4 DNS settings on Windows 10 showing Preferred DNS bound to 192.168.10.7]**
+![Import OVA](https://github.com/user-attachments/assets/ea664f11-68e4-4dd3-8d96-bec31b126ee4)
 
-#### 📸 [SCREENSHOT] - Domain Enrollment Host Verification
-> 🟥 **[DROP HERE: Screenshot of Windows 10 System Properties showing computer name "target-PC" and Domain successfully bound to "badr.local"]**
+![Import OVA](https://github.com/user-attachments/assets/59614605-3333-46da-9992-661cc880302f)
 
-#### 📸 [SCREENSHOT] - User Authentication Session Ingress
-> 🟥 **[DROP HERE: Screenshot of Windows 10 active session displaying logged-in domain user "Mohamed Drider" (e.g., cmd command output of `whoami` or `echo %username%` displaying badr\mdrider)]**
