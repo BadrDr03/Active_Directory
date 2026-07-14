@@ -112,3 +112,46 @@ Default Gateway: 192.168.10.1
 To ensure all centralized log paths are operational, host monitoring is verified through the Splunk Web interface. The ingestion pipeline tracks system logs forwarded dynamically across the isolated zone.
 
 ![Import OVA](https://github.com/user-attachments/assets/ce5c2496-21a1-4f37-a422-56315afd278d)
+
+---
+
+## 🌲 Active Directory Domain Provisioning & Directory Services
+
+To replicate a production-grade enterprise hierarchy, Active Directory Domain Services (AD DS) were successfully provisioned on the Domain Controller (`ADDC01`), establishing the local administrative forest root authority.
+
+### 🏢 Directory Architecture & Organizational Units (OUs)
+The directory database is structured into operational units enforcing strict segregation of duties across logical business divisions:
+
+* **Domain Authority:** `badr.local`
+* **Domain Controller IP:** `192.168.10.7` (Preferred DNS for domain-joined endpoints to locate service location (SRV) records).
+
+| Organizational Unit (OU) | Dedicated Identity Account | User Principal Name (UPN) | Active Directory Path |
+| :--- | :--- | :--- | :--- |
+| **IT Department** | `Badr Eddine Ait Ben Ijja` | `badr@badr.local` | `OU=IT,DC=badr,DC=local` |
+| **HR Department** | `Mohamed Drider` | `medrider@badr.local` | `OU=HR,DC=badr,DC=local` |
+
+---
+
+### 🖥️ Step 1: Directory Services Hierarchical Blueprint
+The Organizational Units and organizational objects were mapped using the **Active Directory Users and Computers (ADUC)** administrative console on `ADDC01`.
+
+![Import OVA](https://github.com/user-attachments/assets/3a362c38-ff84-4207-94fe-472ebd580d3e)
+![Import OVA](https://github.com/user-attachments/assets/316495fa-6411-4f24-94f9-27ccd77c9bf6)
+
+---
+
+### 🖥️ Step 2: Client Domain Ingress Routing (Target Domain-Join)
+To enroll the client endpoint into the centralized identity plane, the `target-PC` network stack configuration was dynamically re-routed to point exclusively to the Domain Controller DNS:
+
+1. Leveraged local adapter configurations (`ncpa.cpl`) on `target-PC` to point **Preferred DNS** to `192.168.10.7`.
+2. Initiated domain enrollment request querying `badr.local`.
+3. Logged in and authorized credential binding using the `Mohamed Drider` (HR department) account.
+
+#### 📸 [SCREENSHOT] - Active DNS Translation Config on Client
+> 🟥 **[DROP HERE: Screenshot of `ipconfig /all` or IPv4 DNS settings on Windows 10 showing Preferred DNS bound to 192.168.10.7]**
+
+#### 📸 [SCREENSHOT] - Domain Enrollment Host Verification
+> 🟥 **[DROP HERE: Screenshot of Windows 10 System Properties showing computer name "target-PC" and Domain successfully bound to "badr.local"]**
+
+#### 📸 [SCREENSHOT] - User Authentication Session Ingress
+> 🟥 **[DROP HERE: Screenshot of Windows 10 active session displaying logged-in domain user "Mohamed Drider" (e.g., cmd command output of `whoami` or `echo %username%` displaying badr\mdrider)]**
