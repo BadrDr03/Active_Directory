@@ -151,3 +151,18 @@ To enroll the client endpoint into the centralized identity plane, the `target-P
 
 ![Import OVA](https://github.com/user-attachments/assets/59614605-3333-46da-9992-661cc880302f)
 
+---
+
+## 🐉 Adversary Environment Setup & Tooling Provisioning
+
+To prepare the adversary platform (`Kali-Attacker`) for security auditing and attack simulation phases, a dedicated workspace directory was established alongside essential auditing toolsets.
+
+### 🛠️ Environment Initialization
+
+1. Created a centralized directory structure to store attack scripts, password lists, and telemetry reports:
+   ```bash
+   mkdir ad-project
+   ```
+![Import OVA](https://github.com/user-attachments/assets/ac02f2ea-ce7b-4766-9ade-3ef2f08070a9)
+
+
