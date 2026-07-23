@@ -163,6 +163,12 @@ To prepare the adversary platform (`Kali-Attacker`) for security auditing and at
    ```bash
    mkdir ad-project
    ```
+
+2. Provisioned network protocol brute-forcing utilities (crowbar) for upcoming authentication testing routines:
+
+   sudo apt-get install -y crowbar
+   
 ![Import OVA](https://github.com/user-attachments/assets/ac02f2ea-ce7b-4766-9ade-3ef2f08070a9)
+
 
 
