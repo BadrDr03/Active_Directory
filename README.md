@@ -170,5 +170,32 @@ To prepare the adversary platform (`Kali-Attacker`) for security auditing and at
    
 ![Import OVA](https://github.com/user-attachments/assets/ac02f2ea-ce7b-4766-9ade-3ef2f08070a9)
 
+---
+
+### 📜 2. Custom Dictionary & Wordlist Preparation
+
+To streamline targeted authentication auditing and minimize execution latency during brute-force simulations, the default `rockyou.txt` wordlist was extracted and tailored into a lightweight test dictionary.
+
+1. **Wordlist Decompression & Workspace Staging:**
+   ```bash
+   cd /usr/share/wordlists
+   sudo gunzip rockyou.txt.gz
+   cp rockyou.txt ~/Desktop/ad-project/
+   cd ~/Desktop/ad-project
+   ```
+![Import OVA](https://github.com/user-attachments/assets/13898e13-28ed-472d-9377-cf9dc9ac240a)
+
+ Micro-Dictionary Generation & Target Credential Seeding:
+
+Extracted the top 20 most frequent entries into a dedicated passwords.txt file:
+
+```
+head -n 20 rockyou.txt > passwords.txt
+```
+
+Appended domain-specific password candidates via nano passwords.txt to align with the active Active Directory account policy parameters:
+
+![Import OVA](https://github.com/user-attachments/assets/176fbb5b-c347-4ece-a824-3f2f972302d6)
+
 
 
