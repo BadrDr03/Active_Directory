@@ -197,5 +197,30 @@ Appended domain-specific password candidates via nano passwords.txt to align wit
 
 ![Import OVA](https://github.com/user-attachments/assets/176fbb5b-c347-4ece-a824-3f2f972302d6)
 
+---
+
+## 🖥️ Target Endpoint Service Configuration: Remote Desktop (RDP)
+
+To enable endpoint administration and prepare the target environment for authentication auditing, Remote Desktop Protocol (RDP) access was provisioned and delegated to target domain accounts.
+
+### ⚙️ Service Activation & Network Level Authentication (NLA)
+1. **RDP Activation:** Enabled "Allow remote connections to this computer" within System Properties (`sysdm.cpl`).
+2. **Security Baseline:** Retained Network Level Authentication (NLA) enforcement (*Allow connections only from computers running Remote Desktop with Network Level Authentication*) to enforce authentication prior to session establishment.
+
+### 👥 Access Control Delegation
+Explicit remote login permissions were granted to domain accounts under the local **Remote Desktop Users** group:
+
+| Domain Account | SAM Account Name | Granted Privilege |
+| :--- | :--- | :--- |
+| **Badr Eddine Ait Ben Ijja** | `BADR\BadrAit` | Remote Desktop Interactive Login |
+| **Mohamed Med Drider** | `BADR\MedDrider` | Remote Desktop Interactive Login |
+| **Domain Administrator** | `BADR\Administrator` | Default Full Control |
+
+---
+![Import OVA](https://github.com/user-attachments/assets/622e6d6c-0c2d-4e18-88df-a2dfb710edf3)
+
+---
+
+
 
 
