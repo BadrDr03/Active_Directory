@@ -450,3 +450,67 @@ index=endpoint EventCode=4732
 ```
 
 ![Import OVA](https://github.com/user-attachments/assets/3694ef4b-0519-448f-b7da-b2cc12789352)
+
+---
+
+# 🛡️ Enterprise Active Directory Security, Threat Emulation & SIEM Detection Lab
+
+## 📌 Executive Summary
+
+This project showcases the end-to-end deployment, security hardening, threat emulation, and detection engineering of a hybrid **Active Directory (AD) Enterprise Environment**. 
+
+The lab simulates real-world adversary behavior by executing **MITRE ATT&CK** techniques against a domain-joined endpoint, capturing host-level telemetry, and building actionable **Splunk SIEM** detection queries to identify persistence and privilege escalation vectors.
+
+---
+
+## 🏗️ Lab Infrastructure & Component Architecture
+
+* **Domain Controller (`ADDC01`):** Windows Server hosting AD DS and managing the primary domain `badr.local`.
+* **Target Endpoint (`target-PC.badr.local`):** Windows workstation configured as the primary victim host for execution and security auditing.
+* **SIEM Platform (`Splunk Server`):** Ingests real-time security events (`WinEventLog:Security`) forwarded from `target-PC` under `index=endpoint`.
+* **Threat Emulation Harness (`Atomic Red Team`):** Integrated onto the target host to run controlled adversary techniques.
+
+---
+
+## 🔄 Complete Step-by-Step Execution Lifecycle
+
+### Phase 1: Security Hardening & Host Auditing
+* **GPO Account Lockout Policy:** Configured via `gpmc.msc` on `badr.local` to mitigate brute-force/credential dumping attempts:
+  * **Account Lockout Threshold:** `5 failed attempts`
+  * **Account Lockout Duration & Reset Counter:** `30 minutes`
+* **Logon Auditing:** Configured Windows Event Viewer (`eventvwr.msc`) to monitor remote interactive login failures (`Event ID 4625`, Logon Types 3 & 10).
+
+### Phase 2: Threat Emulation Environment Setup
+* **Antivirus Exclusion Configuration:** Configured folder exclusions in Microsoft Defender (`C:\` and `C:\AtomicRedTeam`) to prevent the AV engine from quarantining benign simulation payloads.
+* **Framework Deployment:** Adjusted PowerShell execution context (`Set-ExecutionPolicy Bypass -Scope CurrentUser`) and deployed `Invoke-AtomicRedTeam` with full Atomics library definitions.
+
+### Phase 3: Adversary Simulation (MITRE ATT&CK T1136.001 - Local Account Creation)
+Executed technique `T1136.001` across multiple attack variants:
+1. **CMD Execution (`T1136.001-4`):** Failed (**Exit Code 2**) due to Active Directory password policy constraints (`NET HELPMSG 2245`).
+2. **PowerShell Cmdlet (`T1136.001-5`):** Successfully created local user account (`New-LocalUser`).
+3. **Admin Group Assignment (`T1136.001-8`):** Elevated privileges by binding a new account to the local `Administrators` group.
+4. **.NET API Execution & Automated Teardown (`T1136.001-9`):** Interacted directly with `.NET` assemblies (`System.DirectoryServices`) to bypass standard CLI logs, creating `NewLocalUser` and instantly deleting it in milliseconds (transient execution).
+
+### Phase 4: SIEM Telemetry & Detection Engineering (Splunk)
+* **Transient Log Analysis:** Identified that rapid user creation and deletion cycles can bypass standard process creation logs (`EventCode 4720`).
+* **Privilege Escalation Artifacts:** Focused SOC detection on **Event Code 4732** (*A member was added to a security-enabled local group*).
+* **Forensic Value:** Extracted target groups (`Remote Desktop Users` / `Administrators`), Subject Accounts (`BADR\Administrator`), and target SIDs (`S-1-5-21-...`) to establish persistent detection queries.
+
+---
+
+## 📈 Primary Splunk Detection Query (SPL)
+
+To hunt for local group escalation events across enterprise endpoints:
+
+```splunk
+index=endpoint EventCode=4732
+| table _time, ComputerName, Account_Domain, Group_Name, Member, Security_ID
+| sort - _time
+```
+
+🛠️ Key Takeaways & SOC Analyst Insights
+1- Defensive GPO Impact: Enforcing strong GPO password policies actively disrupts automated adversary scripts (as demonstrated in T1136.001-4).
+
+2- Detection Beyond Names: Searching exclusively for transient usernames (NewLocalUser) fails during rapid cleanup. Detection logic must rely on static Event Codes (4732) and SID tracking.
+
+3- Telemetry Pipeline Integrity: Confirmed end-to-end visibility from endpoint log generation (WinEventLog:Security) to Splunk ingestion.
