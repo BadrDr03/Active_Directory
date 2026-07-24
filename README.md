@@ -272,3 +272,38 @@ Event Status: Verified real-time ingestion of failed RDP logon events under Even
 
 ![Splunk SIEM Telemetry Dashboard](https://github.com/user-attachments/assets/1162f3c0-55ad-4c74-bbbb-7a0cf66fe188)
 
+---
+
+---
+
+## ⚙️ Active Directory GPO Hardening (Account Lockout Policy)
+
+To mitigate automated credential attacks and prevent account compromise, a domain-wide **Account Lockout Policy** was enforced via Group Policy Management on the Domain Controller (`ADDC01`).
+
+### 🛠️ Policy Enforcement Steps:
+
+1. **Open Group Policy Management Console:**
+   Opened GPMC on the Domain Controller via `Win + R` ➔ Executed `gpmc.msc`.
+
+2. **Access Domain Policy:**
+   Navigated to: `Domains` ➔ `badr.local` ➔ Right-clicked **Default Domain Policy** ➔ Selected **Edit...**.
+
+3. **Navigate to Account Policies:**
+   Drilled down to:
+   `Computer Configuration` ➔ `Policies` ➔ `Windows Settings` ➔ `Security Settings` ➔ `Account Policies` ➔ **Account Lockout Policy**.
+
+4. **Enforce Security Baseline Parameters:**
+
+| Policy Setting | Enforced Value | Security Impact |
+| :--- | :--- | :--- |
+| **Account lockout threshold** | `5 invalid logon attempts` | Locks domain accounts after 5 consecutive failed authentication attempts. |
+| **Account lockout duration** | `30 minutes` | Enforces a 30-minute lockout window to throttle automated attempts. |
+| **Reset account lockout counter after** | `30 minutes` | Resets the invalid attempt counter following 30 minutes of inactivity. |
+
+5. **Force Domain Policy Update:**
+   Applied the updated policy across domain endpoints via Command Prompt:
+   ```cmd
+   gpupdate /force
+   ```
+
+   ![Active Directory GPO Lockout Policy](https://github.com/user-attachments/assets/0aa66dbb-ae56-4484-9f91-e586cfb6b883)
