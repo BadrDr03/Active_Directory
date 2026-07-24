@@ -307,3 +307,48 @@ To mitigate automated credential attacks and prevent account compromise, a domai
    ```
 
    ![Active Directory GPO Lockout Policy](https://github.com/user-attachments/assets/0aa66dbb-ae56-4484-9f91-e586cfb6b883)
+
+---
+
+---
+
+## 🧪 Threat Emulation Framework Setup (Atomic Red Team)
+
+To validate detection coverage and generate threat simulation telemetry across the domain endpoint, the **Atomic Red Team** framework was deployed on the target machine (`target-PC.badr.local`).
+
+### 🛠️ Detailed Environment Preparation & Deployment Steps:
+
+1. **Configure Microsoft Defender Antivirus Exclusion:**
+   * **Action:** Added `C:\` (and `C:\AtomicRedTeam`) to the Microsoft Defender Exclusion list via **Windows Security Settings** (`Windows Security` ➔ `Virus & threat protection` ➔ `Manage settings` ➔ `Add or remove exclusions`).
+   * **Technical Justification:** Atomic Red Team contains real-world adversary behavior scripts, techniques, and binaries (e.g., Mimikatz wrappers, obfuscated PowerShell payloads). Without explicit AV exclusions, Defender's Real-Time Protection engine would automatically flag, quarantine, or delete these benign simulation artifacts upon download.
+
+2. **Bypass PowerShell Execution Policy:**
+   * **Action:** Executed the following command within an elevated PowerShell session (**Run as Administrator**):
+     ```powershell
+     Set-ExecutionPolicy Bypass -Scope CurrentUser
+     ```
+   * **Technical Justification:** By default, Windows restricts the execution of unsigned third-party PowerShell scripts (`Restricted` or `RemoteSigned` policies). Setting the scope to `Bypass` for the `CurrentUser` allows the framework installation and test scripts to run unhindered without altering system-wide policies permanently.
+
+3. **Import Remote Installation Script:**
+   * **Action:** Downloaded and evaluated the official Atomic Red Team bootstrap script directly into memory:
+     ```powershell
+     IEX (New-Object Net.WebClient).DownloadString('[https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1](https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1)')
+     ```
+   * **Technical Justification:** Utilizes the `Invoke-Expression` (`IEX`) cmdlet to execute the remotely hosted script without saving intermediate installer files to disk.
+
+4. **Deploy Framework Engine & Download Atomics Repository:**
+   * **Action:** Executed the core installation cmdlet to install `Invoke-AtomicRedTeam` module and clone the test library:
+     ```powershell
+     Install-AtomicRedTeam -getAtomics
+     ```
+   * **Technical Justification:** This step installs the execution engine (`Invoke-AtomicTest` functions) and pulls all pre-built MITRE ATT&CK test cases into `C:\AtomicRedTeam\atomics`.
+
+---
+
+### 📸 Screenshot 1: Antivirus Exclusion Configuration
+> ![Microsoft Defender Exclusion List Displaying C Drive](https://github.com/user-attachments/assets/4cd47146-22cf-40f5-81eb-0b43d44a8bcd)
+
+---
+
+### 📸 Screenshot 2: Atomic Red Team Successful Installation
+> ![PowerShell Execution Showing Invoke-AtomicRedTeam Deployment Success](https://github.com/user-attachments/assets/9bf02e04-57a1-4161-81aa-c049da7fa492)
