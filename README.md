@@ -221,6 +221,43 @@ Explicit remote login permissions were granted to domain accounts under the loca
 
 ---
 
+---
 
+## 📊 Windows Endpoint Security Auditing
+
+To record and analyze remote authentication attempts across the domain, local security auditing was inspected and verified directly on the target endpoint (`target-PC.badr.local`).
+
+### 🛠️ Verification & Filtering Protocol:
+1. Launched Event Viewer with administrative privileges:
+   `Win + R` ➔ Executed `eventvwr.msc` ➔ **Run as Administrator** *(Elevated execution is required to access the restricted `Security.evtx` channel)*.
+2. Navigated to: **Windows Logs** ➔ **Security**.
+3. Configured event view filters via **Filter Current Log...**:
+   * **Event ID:** `4625` *(An account failed to log on)*
+
+### 🔑 Monitored Security Event Schema:
+* **Event ID 4625:** Triggered upon authentication failure.
+  * **Logon Type 10 (RemoteInteractive):** Direct RDP authentication attempt.
+  * **Logon Type 3 (Network):** CredSSP / NLA pre-authentication handshake.
+
+---
+
+### 📸 Security Event Log Verification
+> ![Event Viewer Filtered by Event ID 4625](https://github.com/user-attachments/assets/9e8beb48-3ea5-4b23-9122-9d0ad7cdd559)
+
+---
+
+## 📈 Centralized SIEM Ingestion & Analytics (Splunk)
+
+Endpoint security logs generated on `target-PC` are streamed in real time to the central Splunk SIEM instance via the **Splunk Universal Forwarder** service.
+
+### 🛠️ Ingestion Verification & SPL Investigation:
+1. Access the Splunk Web Interface: `http://192.168.10.10:8000`.
+2. Open **Search & Reporting**.
+3. Executed Splunk Processing Language (SPL) search to summarize ingested authentication failure telemetry:
+
+```splunk
+index=endpoint EventCode=4625
+| stats count BY TargetUserName, ComputerName, IpAddress, LogonType
+| sort - count
 
 
