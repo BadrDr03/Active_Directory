@@ -352,3 +352,101 @@ To validate detection coverage and generate threat simulation telemetry across t
 
 ### 📸 Screenshot 2: Atomic Red Team Successful Installation
 > ![PowerShell Execution Showing Invoke-AtomicRedTeam Deployment Success](https://github.com/user-attachments/assets/9bf02e04-57a1-4161-81aa-c049da7fa492)
+
+---
+
+---
+
+## 💥 Threat Emulation Execution: MITRE ATT&CK T1136.001 (Local Account Creation)
+
+To test the endpoint security posture and evaluate SIEM detection capabilities against persistence mechanisms, the atomic technique **T1136.001** (*Create Account: Local Account*) was executed using the Atomic Red Team framework.
+
+### 🛠️ Execution Context & Command Protocol:
+
+Executed the full atomic test suite for local account creation within an elevated PowerShell session:
+
+```powershell
+Invoke-AtomicTest T1136.001 -PathToAtomicsFolder C:\AtomicRedTeam\atomics
+```
+
+🔬 Detailed Breakdown of Executed Atomic Test Variations:
+The T1136.001 module executes multiple sub-tests (variants) to simulate different adversary vectors for creating local accounts:
+
+1. Test T1136.001-4: Create a new user via Command Prompt (net user)
+
+Execution Vector: Uses native net.exe command line syntax (net user <username> <password> /add).
+
+Outcome: Exit Code 2 (Failed).
+
+Root Cause Analysis: The hardcoded password payload within the atomic script failed local/domain password complexity policy constraints (NET HELPMSG 2245).
+
+2. Test T1136.001-5: Create a new user via PowerShell (New-LocalUser)
+
+Execution Vector: Uses native PowerShell cmdlet New-LocalUser.
+
+Outcome: Exit Code 0 (Success). Account T1136.001_PowerShell created successfully.
+
+3. Test T1136.001-8: Create a new Windows Admin user
+
+Execution Vector: Creates a user account and elevates privileges by adding it directly to the local Administrators security group.
+
+Outcome: Exit Code 0 (Success). Commands completed successfully.
+
+4. Test T1136.001-9: Create a new Windows Admin user via .NET API
+
+Execution Vector: Interacts directly with System.DirectoryServices .NET assemblies, bypassing standard CLI execution binaries (net.exe).
+
+Outcome: Exit Code 0 (Success & Automated Teardown).
+
+Behavioral Detail: Provisioned NewLocalUser, added it to Administrators, displayed account details, and executed an immediate cleanup cycle (User 'NewLocalUser' deleted successfully).
+
+---
+---
+
+## 💥 Threat Emulation Execution: MITRE ATT&CK T1136.001 (Local Account Creation)
+
+To test the endpoint security posture and evaluate SIEM detection capabilities against persistence mechanisms, the atomic technique **T1136.001** (*Create Account: Local Account*) was executed using the Atomic Red Team framework.
+
+### 🛠️ Execution Context & Command Protocol:
+
+Executed the full atomic test suite for local account creation within an elevated PowerShell session:
+
+```powershell
+Invoke-AtomicTest T1136.001 -PathToAtomicsFolder C:\AtomicRedTeam\atomics
+```
+![Import OVA](https://github.com/user-attachments/assets/9366af6d-163d-454d-af4e-641dad4834b1)
+
+---
+
+## 🔍 SIEM Detection Strategy & Detailed Telemetry Analysis
+
+### 🧠 Tactical Concept & What Actually Happened:
+When running threat emulation via Atomic Red Team (`T1136.001`), the framework performs account creation and immediate automated cleanup within milliseconds. In Windows, transient user creations often bypass standard process logging or short-interval forwarder polling (`EventCode 4720`).
+
+However, **Privilege Escalation & Group Management** leaves an indelible operational footprint. Adding any account (or transient SID) to a security-sensitive group like `Remote Desktop Users` or `Administrators` triggers an immutable system audit event: **Event Code 4732**.
+
+---
+
+### 🔬 Deep Dive: Anatomy of Event Code 4732
+
+When inspecting the ingested telemetry on Splunk, the raw security log reveals key forensics indicators:
+
+* **EventCode (`4732`):** Explicitly denotes *"A member was added to a security-enabled local group"*.
+* **TaskCategory (`Security Group Management`):** Confirms an administrative modification to Windows security principals.
+* **Subject Account (`BADR\Administrator`):** Identifies **who** performed the action. The local or domain administrator authenticated session executed the group modification.
+* **Target Group (`Group Name: Remote Desktop Users` / `Security ID: S-1-5-32-555`):** Specifies the exact group modified. Adding non-privileged accounts to this group expands the attack surface by enabling remote interactive login rights via RDP.
+* **Member SID (`S-1-5-21-...-1106`):** The Security Identifier of the user account being granted elevated access. Even if the user account is deleted immediately after, its unique SID remains logged in the event record.
+
+---
+
+### 📈 Splunk Investigation & Detection Query (SPL)
+
+To hunt for suspicious local group membership modifications across endpoints, the following Splunk Processing Language query filters for Event 4732 while organizing key administrative metadata:
+
+```splunk
+index=endpoint EventCode=4732
+| table _time, ComputerName, Subject_Account_Name, Group_Name, Member_Security_ID
+| sort - _time
+```
+
+![Import OVA](https://github.com/user-attachments/assets/3694ef4b-0519-448f-b7da-b2cc12789352)
