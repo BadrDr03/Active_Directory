@@ -259,5 +259,16 @@ Endpoint security logs generated on `target-PC` are streamed in real time to the
 index=endpoint EventCode=4625
 | stats count BY TargetUserName, ComputerName, IpAddress, LogonType
 | sort - count
+```
 
+---
+
+📊 Ingested Telemetry Summary:
+Log Source: WinEventLog:Security
+
+Host Identifier: target-PC.badr.local
+
+Event Status: Verified real-time ingestion of failed RDP logon events under EventCode=4625
+
+![Splunk SIEM Telemetry Dashboard](https://github.com/user-attachments/assets/1162f3c0-55ad-4c74-bbbb-7a0cf66fe188)
 
