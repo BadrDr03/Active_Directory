@@ -453,4 +453,47 @@ index=endpoint EventCode=4732
 
 ---
 
-ine Integrity: Confirmed end-to-end visibility from endpoint log generation (WinEventLog:Security) to Splunk ingestion.
+---
+
+## 💥 Brute-Force Threat Emulation & Account Lockout Validation
+
+To validate the domain-wide **Account Lockout Policy** enforced via Active Directory Group Policy Objects (GPO), an automated credential brute-force simulation was executed against local and network authentication endpoints.
+
+### 🛠️ Threat Emulation Execution
+
+An automated authentication attack was simulated by generating multiple consecutive invalid logon attempts against the SMB service (`\\localhost`). This was designed to cross the baseline threshold of 5 failed attempts set in the Domain Security Policy.
+
+![Brute Force Attack Simulation](https://github.com/user-attachments/assets/c2886ff7-f0f2-4707-b504-fadbe83147e3)
+
+*Figure 5.1: Execution of repeated invalid authentication attempts targeting SMB endpoints to test Domain Account Lockout policy thresholds.*
+
+---
+
+### 🔍 SIEM Ingestion & Forensic Analysis
+
+Following the attack execution, the generated Windows Security Audit telemetry was ingested by Splunk for forensic triage and analysis:
+
+1. **Failed Logon Detection (Event ID 4625):**
+   * Splunk captured multiple `EventCode=4625` entries indicating failed NTLM/Kerberos authentication events from `target-PC.badr.local`.
+   * **SPL Search Query:**
+     ```splunk
+     index=endpoint EventCode=4625
+     ```
+
+![Splunk Failed Logon Events](https://github.com/user-attachments/assets/10df10e9-9e68-4f2b-b320-171a7d671ecc)
+
+*Figure 5.2: Ingestion of EventCode 4625 logs in Splunk confirming captured brute-force telemetry.*
+
+---
+
+## 📋 SOC Incident Response Playbook: Local Group Escalation & Account Lockout
+
+When a SOC Analyst receives an alert for **EventCode 4732** (Privilege Escalation) or **EventCode 4740** (Account Lockout), the following Standard Operating Procedure (SOP) must be followed for triage and containment:
+
+| Step | Phase | Action / Procedure |
+| :--- | :--- | :--- |
+| **1** | **Alert Verification** | Validate alert timestamp, host `ComputerName`, and `TargetUserName` in Splunk to rule out benign user errors (False Positives). |
+| **2** | **Host Isolation** | If unauthorized group modification (`4732`) or high-frequency brute-force (`4740`) is confirmed, isolate `target-PC` from the network via EDR or network switch port lockdown. |
+| **3** | **Credential Remediation** | Disable or reset credentials for the compromised account immediately within Active Directory Users and Computers (`dsa.msc`). |
+| **4** | **Forensic Evidence Collection** | Extract Sysmon telemetry (`Event ID 1` for process execution trees and `Event ID 3` for network connections) surrounding the incident timeframe. |
+| **5** | **Containment & Closure** | Document compromised SIDs, notify the Tier 2/IR Incident Response team, and update the internal ticketing system with root cause analysis. |
